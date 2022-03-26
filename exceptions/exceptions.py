@@ -4,7 +4,7 @@ class NoTypeStr(Exception):
     Args:
         Exceptions (class): Базовый класс исключений
     """
-    def __init__(self, message='Некорректный тип данных. Ожидался str со статусом.'):
+    def __init__(self, message='Ожидался str со статусом.'):
         self.message = message
         super().__init__(self.message)
 
@@ -33,7 +33,7 @@ class NoTypeDict(Exception):
     Args:
         Exceptions (class): Базовый класс исключений
     """
-    def __init__(self, message='Некорректный тип данных. Ожидался dict с домашкой.'):
+    def __init__(self, message='Ожидался dict с домашкой.'):
         self.message = message
         super().__init__(self.message)
 
@@ -75,7 +75,7 @@ class NoTypeList(Exception):
     Args:
         Exceptions (class): Базовый класс исключений
     """
-    def __init__(self, message='Некорректный тип данных. Ожидался list с домашками.'):
+    def __init__(self, message='Ожидался list с домашками.'):
         self.message = message
         super().__init__(self.message)
 
@@ -89,7 +89,7 @@ class EmptyList(Exception):
     Args:
         Exceptions (class): Базовый класс исключений
     """
-    def __init__(self, message='За указанное время не было никаких домашек. Увеличьте время.'):
+    def __init__(self, message='Увеличьте время.'):
         self.message = message
         super().__init__(self.message)
 

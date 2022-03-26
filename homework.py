@@ -202,14 +202,18 @@ def main():
             try:
                 response = get_api_answer(current_timestamp)
             except Exception as error:
-                error_message = UNIVERSE_EXCEPT_MESSAGES.get('fail_api_request')
+                error_message = UNIVERSE_EXCEPT_MESSAGES.get(
+                    'fail_api_request'
+                    )
                 logging.error(f'Ошибка: {error_message} - {error}')
                 count_failure += 1
                 continue
             try:
                 homework = check_response(response)
             except Exception as error:
-                error_message = UNIVERSE_EXCEPT_MESSAGES.get('fail_api_response')
+                error_message = UNIVERSE_EXCEPT_MESSAGES.get(
+                    'fail_api_response'
+                    )
                 logging.error(f'{error_message} - {error}')
                 count_failure += 1
                 continue
