@@ -115,26 +115,13 @@ def check_response(response: dict) -> dict:
     Returns:
         dict: Параметры посленей домашней работы
     """
-    if 'homeworks' in response:
-        homeworks = response.get('homeworks')
-        homework = homeworks[0]
-        if type(homeworks) is not list:
-            raise exceptions.NoTypeList
-        if len(homeworks) == 0:
-            raise exceptions.EmptyList
-        if type(homework) is not dict:
-            raise exceptions.NoTypeDict
-        if 'status' not in homework:
-            raise exceptions.NullStatus
-        else:
-            status = homework.get('status')
-        if type(status) is not str:
-            raise exceptions.NoTypeStr
-        if status not in HOMEWORK_STATUSES:
-            raise exceptions.NullStatus
-    else:
-        raise exceptions.NoKeyHomeworks
-    return response.get('homeworks')[0]
+    if isinstance(response, dict):
+        if 'homeworks' in response:
+            if isinstance(response.get('homeworks'), list):
+                return response.get('homeworks')[0]
+            raise TypeError('API возвращает не список.')
+        raise KeyError('В ответе нет ключа homeworks.')
+    raise TypeError('API возвращает не словарь.')
 
 
 def check_status(homework: dict) -> str:
@@ -158,10 +145,19 @@ def parse_status(homework: dict) -> str:
     Returns:
         str: Сообщение о изменении статуса проверки работы.
     """
-    homework_name = homework.get('homework_name')
-    homework_status = homework.get('status')
-    verdict = HOMEWORK_STATUSES.get(homework_status)
-    return f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    text = 'Изменился статус проверки работы "{s}". {v}'
+    if isinstance(homework, dict):
+        if 'status' in homework:
+            if 'homework_name' in homework:
+                if isinstance(homework.get('status'), str):
+                    homework_name = homework.get('homework_name')
+                    homework_status = homework.get('status')
+                    verdict = HOMEWORK_STATUSES.get(homework_status)
+                    return text.format(s=homework_name, v=verdict)
+                raise TypeError('Cтатус не str.')
+            raise KeyError('В ответе нет ключа homework_name.')
+        raise KeyError('В ответе нет ключа status.')
+    raise KeyError('API возвращает не словарь.')
 
 
 def send_message(bot, message):
@@ -217,7 +213,14 @@ def main():
                 continue
             current_stautus = check_status(homework)
             if current_stautus != last_status:
-                message = parse_status(homework)
+                try:
+                    message = parse_status(homework)
+                except Exception as error:
+                    error_message = UNIVERSE_EXCEPT_MESSAGES.get(
+                        'fail_api_response')
+                    logging.error(f'{error_message} - {error}')
+                    count_failure += 1
+                    continue
                 last_status = current_stautus
                 logging.info(message)
                 send_message(bot, message)
