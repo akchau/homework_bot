@@ -11,6 +11,7 @@ import time
 import logging
 from exceptions import exceptions
 from logging.handlers import RotatingFileHandler
+from http import HTTPStatus
 
 load_dotenv()
 
@@ -72,10 +73,8 @@ UNIVERSE_EXCEPT_MESSAGES = {
 
 
 def check_tokens():
-    """Проверка значения переменных TOKENS."""
-    if PRACTICUM_TOKEN and TELEGRAM_TOKEN and TELEGRAM_CHAT_ID:
-        return True
-    return False
+    # Для ревьюера: Если объеденить их в одну переменную - не проходят тесты.
+    return all([TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, PRACTICUM_TOKEN])
 
 
 def get_api_answer(current_timestamp) -> dict:
@@ -88,11 +87,10 @@ def get_api_answer(current_timestamp) -> dict:
         list: Лист со всеми проверенными домашникми работами.
     """
     timestamp = current_timestamp or int(time.time())
-    # timestamp = timestamp - TIME_OF_PRACTICUM_OPENING
     params = {'from_date': timestamp}
     headers = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
     response = requests.get(ENDPOINT, headers=headers, params=params)
-    if response.status_code != 200:
+    if response.status_code != HTTPStatus.OK:
         raise exceptions.CodeApiError
     homeworks = response.json()
     return homeworks
