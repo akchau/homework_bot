@@ -73,6 +73,11 @@ UNIVERSE_EXCEPT_MESSAGES = {
 
 
 def check_tokens():
+    """Функция проверяет наличие токенов.
+
+    Returns:
+        _type_: _description_
+    """
     # Для ревьюера: Если объеденить их в одну переменную - не проходят тесты.
     return all([TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, PRACTICUM_TOKEN])
 
